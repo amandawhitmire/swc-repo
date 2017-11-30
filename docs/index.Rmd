@@ -38,10 +38,63 @@ ggplot(data = mpg, aes(x = displ, y = hwy)) +
   geom_point((aes(shape = class)))
 ```
 
-```{r shape}
-ggplot(data = mpg, aes(x = displ, y = hwy)) + 
-  geom_point((aes(shape = class)))
+```{r size}
+ggplot(data = mpg, aes(x = cty, y = hwy, size = class, color = fl))+ 
+  geom_point(alpha = 0.2)
 ```
 
-## Boxplot
+```{r fix color}
 
+ggplot(data = mpg, aes(x = cty, y = hwy, size = class))+ 
+  geom_point(alpha = 0.2, color = "blue")
+```
+
+## Exercises
+
+```{r ex 5.5.2}
+
+ggplot(data = mpg, aes(x = displ, y = hwy, color = cty))+ 
+  geom_point(alpha = 0.4)
+```
+
+```{r ex 5.5.4}
+
+ggplot(data = mpg, aes(x = displ, y = hwy, color = displ <5))+ 
+  geom_point()
+```
+
+## Geoms
+
+```{r geom_examples}
+
+ggplot(mpg, aes(x = drv, y = hwy)) +
+  geom_violin()
+
+```
+
+## Multiple geoms
+
+```{r mult_geoms}
+
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point(aes(x=displ, y=hwy)) +
+  geom_smooth(aes(x=displ, y=hwy))
+
+```
+
+
+
+## Customization
+
+```{r customize}
+
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title = "Realtionship b/w engine size & MPG",
+       x = "Highway MPG",
+       y = "Engine Displacement (liters)") +
+  theme_bw() +
+  theme(text = element_text(size = 16))
+
+```
