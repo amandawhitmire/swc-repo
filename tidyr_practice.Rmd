@@ -1,0 +1,107 @@
+---
+title: "TidyR practice"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+## Example datasets
+
+```{r}
+AirPassengers 
+
+```
+
+```{r read_in_data}
+# gap_wide <- readr::read_csv('https://github.com/OHI-Science/data-science-training/blob/master/data/gapminder_wide.csv')
+
+gap_wide <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder_wide.csv')
+## yesterdays data format
+gapminder <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder.csv')
+```
+
+## `gather()` 
+
+Use `gather()` to reshape a wide dataset
+
+```{r gathering data}
+
+gap_long <- gap_wide %>%
+  gather(key = obstype_year,
+         value = obs_values)
+```
+```{r}
+gap_long <- gap_wide %>%
+  gather(key = obstype_year,
+         value = obs_values,
+         dplyr::starts_with("pop"),
+         dplyr::starts_with("lifeExp"),
+         dplyr::starts_with("gdpPercap"))
+```
+## keep columns wth '-' in gather()
+```{r}
+gap_long <- gap_wide %>%
+  gather(key = obstype_year,
+         value = obs_values,
+         -continent, -country)
+head(gap_long)
+```
+
+## Separate out the year
+
+```{r}
+gap_long <- gap_wide %>%
+  gather(key = obstype_year,
+         value = obs_values,
+         -continent, -country) %>%
+  separate(obstype_year,
+           into = c("obs_type", "year"),
+           sep = "_",
+           convert = T) # make year an integer
+
+head(gap_long)
+```
+
+## plot the long format data
+
+```{r}
+life_df <- gap_long %>%
+  filter(obs_type == "lifeExp",
+         continent == "Americas")
+
+head(life_df)
+
+ggplot(data = life_df, aes(x = year, y = obs_values, color = country)) +
+  geom_line() + 
+  theme_bw() +
+  theme(text = element_text(size = 14))
+```
+
+## Exercise 7.7
+
+Using gap_long, calculate and plot the the mean life expectancy for each continent over time from 1982 to 2007. Give your plot a title and assign x and y labels. Hint: use the dplyr::group_by() and dplyr::summarize() functions.
+
+
+```{r}
+# gap_long %>%
+#   group_by(continent, obs_type) %>%
+#   summarize(means = mean(obs_values))
+
+cont <- gap_long %>% 
+  filter(obs_type == "lifeExp", 
+         year > 1980) %>% 
+  group_by(continent, year) %>% 
+  summarize(mean_le = mean(obs_values))
+
+ggplot(data = cont, aes(x = year, y = mean_le, color = continent)) +
+  geom_line() + 
+  labs(title = "Mean life expectancy",
+       x = "Year",
+       y = "Age (years)",
+       color = "Continent") +
+  theme_classic() +
+  scale_fill_brewer(palette = "Blues")
+```
+
