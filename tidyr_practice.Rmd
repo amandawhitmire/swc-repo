@@ -101,7 +101,28 @@ ggplot(data = cont, aes(x = year, y = mean_le, color = continent)) +
        x = "Year",
        y = "Age (years)",
        color = "Continent") +
-  theme_classic() +
+  theme_bw() +
   scale_fill_brewer(palette = "Blues")
+```
+
+## spread
+
+```{r}
+head(gap_long)
+gap_normal <- gap_long %>%
+  spread(key = obs_type,
+         value = obs_values)
+
+head(gap_normal)
+```
+
+## 7.8 Exercise
+
+Convert “gap_long” all the way back to gap_wide. Hint: you’ll need to create appropriate labels for all our new variables (time*metric combinations) with the opposite of separate: tidyr::unite().
+
+```{r}
+
+unite
+
 ```
 

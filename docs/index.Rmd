@@ -3,10 +3,10 @@ title: "index"
 author: "Amanda Whitmire"
 date: "11/30/2017"
 output: 
-  html_document:
-    code_folding: hide
-    toc: true
-    toc_float: true
+html_document:
+code_folding: hide
+toc: true
+toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -140,8 +140,9 @@ head(gapminder$lifeExp)
 
 ## Actually working with `dplyr`
 
-filter
-```{r}
+### Filter
+
+```{r filter}
 
 filter(gapminder, lifeExp < 29)
 
@@ -151,7 +152,7 @@ swed <- filter(gapminder, country == "Sweden")
 life_swed <- mean(swed$lifeExp)
 
 ## pipe operator `%>%` 
- 
+
 gapminder %>% head(3)
 
 ## let's use the %>% with our Sweden example
@@ -159,7 +160,117 @@ gapminder %>%
   filter(country == "Sweden") %>% 
   summarize(mean_lifeExp = mean(lifeExp))
 
+```
 
+### Select() by columns
+
+```{r select}
+
+## select 2 columns
+select(gapminder, year, lifeExp)
+
+## with the pipe operator
+gapminder %>%
+  select(year, lifeExp) %>%
+  tail()
+
+## combine what we've learned
+
+gapminder %>%
+  filter(country == "Cambodia") %>%
+  select(country, year, pop, gdpPercap)
+
+## same but shorter
+gapminder %>%
+  filter(country == "Cambodia") %>%
+  select(-continent, -lifeExp)  
+
+## a few more things with filter()
+gapminder %>%
+  filter(country == "Mexico",
+         year == 2002)
+
+## `mutate()` to add columns
+gapminder %>%
+  mutate(gdp = pop * gdpPercap)
+
+#let's add an index
+gapminder %>%
+  mutate(index = 1:nrow(gapminder)) %>%
+  tail()
+
+## combine mutations
+gapminder %>%
+  mutate(gdp = pop * gdpPercap) %>%
+  mutate(index = 1:nrow(gapminder))
+
+## combine mutations
+test <- gapminder %>%
+  mutate(gdp = pop * gdpPercap, 
+         index = 1:nrow(gapminder)) #even shorter!
+
+## not the right way, shouldn't work
+gapminder %>%
+  filter(country == c("Egypt", "Vietnam"))
+
+## this %in% operator let's you filter multiple things within a `c()`
+gapminder %>%
+  filter(country %in% c("Egypt", "Vietnam"))
+
+## Exercise: Find the maximum gdpPercap of Egypt and Vietnam -> Create a new column.
+
+gapminder %>%
+  filter(country %in% c("Egypt", "Vietnam")) %>%
+  mutate(max_gdpPercap = max(gdpPercap))
+
+## group_by() so that we can get two maxes
+gapminder %>%
+  filter(country %in% c("Egypt", "Vietnam")) %>%
+  group_by(country) %>%
+  # mutate(max_gdpPercap = max(gdpPercap))
+  summarize(max_gdpPercap = max(gdpPercap))
+
+gapminder %>%
+  group_by(country) %>%
+  summarize(max_gdpPercap = max(gdpPercap))
+
+## let's keep the year associated with the max gdp variable
+gapminder %>%
+  group_by(country) %>%
+  mutate(max_gdpPercap = max(gdpPercap)) %>%
+  filter(max_gdpPercap == gdpPercap) %>%
+  arrange(max_gdpPercap) #if you want descending order, you use arrage(desc(max_gdpPercap))
+
+gapminder %>%
+  group_by(country) %>%
+  #mutate(max_gdpPercap = max(gdpPercap)) %>%
+  filter(gdpPercap == max(gdpPercap)) 
 
 ```
+
+# Day 2
+
+## Joining datasets
+
+```{r joining}
+
+## read in the data. (same URL as yesterday, just with co2.csv instead of gapminder.csv)
+co2 <- read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/co2.csv")
+
+#create new variable with only gapminder 2007 data
+gap_2007 <- gapminder %>%
+  filter(year == 2007)
+gap_2007 %>% head()
+gap_2007 %>% str() # 142 rows
+
+# left join gap_2007 to co2
+lj <- left_join(gap_2007, co2, by = "country")
+lj %>% dim()
+
+# right join gap_2007 to co2
+rj <- right_join(gap_2007, co2)
+rj %>% dim() # 12 rows
+```
+
+
 

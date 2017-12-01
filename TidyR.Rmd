@@ -1,0 +1,36 @@
+---
+title: "TidyR practice"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+## Example datasets
+
+```{r}
+AirPassengers 
+
+```
+
+```{r read_in_data}
+# gap_wide <- readr::read_csv('https://github.com/OHI-Science/data-science-training/blob/master/data/gapminder_wide.csv')
+
+gap_wide <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder_wide.csv')
+## yesterdays data format
+gapminder <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder.csv')
+```
+
+## `gather()` 
+
+Use `gather()` to reshape a wide dataset
+
+```{r gathering data}
+
+gap_long <-  gap_wide %>%
+  gather(key = obstype_year,
+         value = obs_values)
+
+```
+
