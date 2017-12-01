@@ -22,7 +22,10 @@ ggsave(png, g)
 # function: for plotting any country ----
 plot_country <- function(cntry){
   
+  # cntry <- "Canada"
+  # browser()
   png <- paste0("gdp_", cntry, ".png")
+  cat("plot_country(", cntry,") -> ", png, "\n") # display debug/progress info
   
   g <- gapminder %>%
     filter(country == cntry) %>%
@@ -37,10 +40,8 @@ plot_country <- function(cntry){
 plot_country("Mexico")
 
 # for: loop to iterate over some countries ----
-countries <- c("United States", "France")
+countries <- c("United States", "France", "Peru", "New Zealand")
 
 for (k in countries){
-  
   plot_country(k)
-  
 }
